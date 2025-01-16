@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Tristan O’Malley">
-<meta name="dcterms.date" content="2025-01-12">
+<meta name="author" content="Ke Gao">
+<meta name="dcterms.date" content="2025-01-15">
 
-<title>Welcome To My Blog – Data-Driven Healthcare: Predicting Heart Failure</title>
+<title>Predicting Survival in Heart Failure Patients Using Logistic Regression – Data-Driven Healthcare: Predicting Heart Failure</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -115,9 +115,9 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Welcome To My Blog</h1>
+      <h1 class="title">Predicting Survival in Heart Failure Patients Using Logistic Regression</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">news</div>
+                <div class="quarto-category">Analysis</div>
               </div>
                   </div>
   </div>
@@ -128,14 +128,14 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Author</div>
       <div class="quarto-title-meta-contents">
-               <p>Tristan O’Malley </p>
+               <p>Ke Gao </p>
             </div>
     </div>
       
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">January 12, 2025</p>
+        <p class="date">January 15, 2025</p>
       </div>
     </div>
     
@@ -154,11 +154,152 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>This is the first post in a Quarto blog. Welcome!</p>
-<p><img src="thumbnail.jpg" class="img-fluid"></p>
-<p>Since this post doesn’t specify an explicit <code>image</code>, the first image in the post will be used in the listing page of posts.</p>
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction"><strong>Introduction</strong></h3>
+<p>Heart failure is a critical condition contributing to millions of deaths globally every year. Leveraging electronic medical records and machine learning techniques offers a promising approach to improving patient outcomes by predicting survival rates. In this blog, we will discuss how we built a logistic regression model to predict survival outcomes for heart failure patients, exploring its performance, challenges, and potential applications.</p>
+<hr>
+</section>
+<section id="dataset-overview" class="level3">
+<h3 class="anchored" data-anchor-id="dataset-overview"><strong>Dataset Overview</strong></h3>
+<p>The dataset used for this analysis consists of 299 patients, including 105 women and 194 men aged between 40 and 95 years. It includes 13 clinical, body, and lifestyle features, such as age, anemia status, blood parameters, and follow-up duration. The target variable, <code>DEATH_EVENT</code>, indicates whether a patient survived or passed away during the follow-up period, which averaged 130 days.</p>
+<p>Key challenges with this dataset:</p>
+<ul>
+<li><strong>Small sample size</strong>: Only 299 rows.</li>
+<li><strong>Class imbalance</strong>: 67.89% of patients survived, while only 32.11% passed away, making it crucial to address imbalance during modeling.</li>
+</ul>
+<hr>
+</section>
+<section id="exploratory-data-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="exploratory-data-analysis"><strong>Exploratory Data Analysis</strong></h3>
+<p>Our analysis revealed the following:</p>
+<ul>
+<li>No missing values in the dataset, eliminating the need for imputation.</li>
+<li>Low correlations between features, indicating no significant multicollinearity issues.</li>
+</ul>
+<p>Key features included:</p>
+<ul>
+<li><strong>Ejection fraction</strong>: The percentage of blood ejected from the heart during contraction.</li>
+<li><strong>Serum creatinine</strong>: Indicates kidney function and has implications for heart health.</li>
+</ul>
+<p>The following plot <a href="#fig-death-event-distributions" class="quarto-xref">Figure&nbsp;1</a> illustrate the probability density distributions of key features in the dataset, categorized by the outcome of the <strong>Death Event</strong> variable (True = patient passed away, False = patient survived). These distributions help us understand the relationship between each feature and patient survival status.</p>
+<p>For example:</p>
+<ul>
+<li><strong>Time:</strong> Patients who survived (False) tend to have longer follow-up periods compared to those who passed away (True).</li>
+<li><strong>Serum Sodium:</strong> Higher serum sodium levels appear to correlate with better survival rates.</li>
+<li><strong>Ejection Fraction:</strong> Patients with higher ejection fraction percentages are more likely to survive.</li>
+</ul>
+<div id="fig-death-event-distributions" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-width="7" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-death-event-distributions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figure/Analyzing_Feature_Distributions_by_Death_Event.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" data-fig-width="7">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-death-event-distributions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Analyzing Feature Distributions by Death Event
+</figcaption>
+</figure>
+</div>
+<hr>
+</section>
+<section id="modeling-approach" class="level3">
+<h3 class="anchored" data-anchor-id="modeling-approach"><strong>Modeling Approach</strong></h3>
+<p>We compared three algorithms—Decision Tree, KNN, and Logistic Regression—and selected logistic regression due to its:</p>
+<ul>
+<li>Interpretability.</li>
+<li>Robustness with smaller datasets.</li>
+<li>Ability to balance bias and variance effectively.</li>
+</ul>
+<p><strong>Hyperparameter Tuning</strong>:<br>
+Using cross-validation, we identified the best regularization parameter (<code>C = 0.0001</code>) from <a href="#fig-training_cross_validation_scores" class="quarto-xref">Figure&nbsp;2</a>, achieving a cross-validation score of 0.83. This indicates that the model generalizes well without overfitting.</p>
+<div id="fig-training_cross_validation_scores" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-width="7" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-training_cross_validation_scores-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figure/Training_Cross-Validation_Scores.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" data-fig-width="7">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-training_cross_validation_scores-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Training vs Cross-Validation Scores
+</figcaption>
+</figure>
+</div>
+<hr>
+</section>
+<section id="model-performance" class="level3">
+<h3 class="anchored" data-anchor-id="model-performance"><strong>Model Performance</strong></h3>
+<p>The logistic regression model achieved:</p>
+<ul>
+<li><strong>Accuracy</strong>: 0.82</li>
+<li><strong>Precision</strong>: 0.70 (moderately conservative in predicting deaths)</li>
+<li><strong>Recall</strong>: 0.74 (captures the majority of high-risk cases)</li>
+<li><strong>F1-Score</strong>: 0.72 (good balance between precision and recall)</li>
+</ul>
+<p><strong>Confusion Matrix</strong></p>
+<p>The confusion matrix below shows the performance of the classification model in predicting survival outcomes:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><strong>Actual &nbsp;Predicted</strong></th>
+<th><strong>Survived (0)</strong></th>
+<th><strong>Deceased (1)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Survived (0)</strong></td>
+<td>35</td>
+<td>6</td>
+</tr>
+<tr class="even">
+<td><strong>Deceased (1)</strong></td>
+<td>5</td>
+<td>14</td>
+</tr>
+</tbody>
+</table>
+<p>The confusion matrix highlights:</p>
+<ul>
+<li><strong>True Positives</strong>: 14 patients correctly identified as deceased.</li>
+<li><strong>True Negatives</strong>: 35 patients correctly identified as survivors.</li>
+<li><strong>False Positives</strong>: 6 survivors misclassified as deceased.</li>
+<li><strong>False Negatives</strong>: 5 deaths missed by the model.</li>
+</ul>
+<hr>
+</section>
+<section id="key-insights" class="level3">
+<h3 class="anchored" data-anchor-id="key-insights"><strong>Key Insights</strong></h3>
+<ol type="1">
+<li><strong>Feature Importance</strong>:
+<ul>
+<li>Platelets and ejection fraction were the most influential features in predicting survival.</li>
+<li>Other significant features included serum creatinine and creatinine phosphokinase.</li>
+</ul></li>
+<li><strong>Challenges</strong>:
+<ul>
+<li>Class imbalance led to potential biases in the model.</li>
+<li>Limited data availability restricted the model’s ability to fully generalize.</li>
+</ul></li>
+<li><strong>Opportunities for Improvement</strong>:
+<ul>
+<li>Collecting a larger, more diverse dataset.</li>
+<li>Experimenting with ensemble models (e.g., Random Forest, Gradient Boosting).</li>
+</ul></li>
+</ol>
+<hr>
+</section>
+<section id="real-world-applications" class="level3">
+<h3 class="anchored" data-anchor-id="real-world-applications"><strong>Real-World Applications</strong></h3>
+<p>This model demonstrates the potential to support clinicians in:</p>
+<ul>
+<li>Identifying high-risk patients for early intervention.</li>
+<li>Allocating medical resources more effectively.</li>
+<li>Enhancing personalized treatment plans based on patient profiles.</li>
+</ul>
+<hr>
+</section>
+<section id="conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion"><strong>Conclusion</strong></h3>
+<p>Our logistic regression model serves as a foundational tool in predicting survival rates for heart failure patients. While its performance is promising, further optimization and larger datasets could significantly improve its clinical utility. With advancements in machine learning and data collection, such predictive models hold immense potential in transforming healthcare decision-making and saving lives.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

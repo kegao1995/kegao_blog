@@ -2,16 +2,9 @@
   {
     "objectID": "posts/welcome/index.html",
     "href": "posts/welcome/index.html",
-    "title": "Welcome To My Blog",
+    "title": "Predicting Survival in Heart Failure Patients Using Logistic Regression",
     "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Data-Driven Healthcare: Predicting Heart Failure",
-    "section": "",
-    "text": "Post With Code\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nJan 15, 2025\n\n\nHarlow Malloc\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nJan 12, 2025\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
+    "text": "Introduction\nHeart failure is a critical condition contributing to millions of deaths globally every year. Leveraging electronic medical records and machine learning techniques offers a promising approach to improving patient outcomes by predicting survival rates. In this blog, we will discuss how we built a logistic regression model to predict survival outcomes for heart failure patients, exploring its performance, challenges, and potential applications.\n\n\n\nDataset Overview\nThe dataset used for this analysis consists of 299 patients, including 105 women and 194 men aged between 40 and 95 years. It includes 13 clinical, body, and lifestyle features, such as age, anemia status, blood parameters, and follow-up duration. The target variable, DEATH_EVENT, indicates whether a patient survived or passed away during the follow-up period, which averaged 130 days.\nKey challenges with this dataset:\n\nSmall sample size: Only 299 rows.\nClass imbalance: 67.89% of patients survived, while only 32.11% passed away, making it crucial to address imbalance during modeling.\n\n\n\n\nExploratory Data Analysis\nOur analysis revealed the following:\n\nNo missing values in the dataset, eliminating the need for imputation.\nLow correlations between features, indicating no significant multicollinearity issues.\n\nKey features included:\n\nEjection fraction: The percentage of blood ejected from the heart during contraction.\nSerum creatinine: Indicates kidney function and has implications for heart health.\n\nThe following plot Figure 1 illustrate the probability density distributions of key features in the dataset, categorized by the outcome of the Death Event variable (True = patient passed away, False = patient survived). These distributions help us understand the relationship between each feature and patient survival status.\nFor example:\n\nTime: Patients who survived (False) tend to have longer follow-up periods compared to those who passed away (True).\nSerum Sodium: Higher serum sodium levels appear to correlate with better survival rates.\nEjection Fraction: Patients with higher ejection fraction percentages are more likely to survive.\n\n\n\n\n\n\n\nFigure 1: Analyzing Feature Distributions by Death Event\n\n\n\n\n\n\nModeling Approach\nWe compared three algorithms—Decision Tree, KNN, and Logistic Regression—and selected logistic regression due to its:\n\nInterpretability.\nRobustness with smaller datasets.\nAbility to balance bias and variance effectively.\n\nHyperparameter Tuning:\nUsing cross-validation, we identified the best regularization parameter (C = 0.0001) from Figure 2, achieving a cross-validation score of 0.83. This indicates that the model generalizes well without overfitting.\n\n\n\n\n\n\nFigure 2: Training vs Cross-Validation Scores\n\n\n\n\n\n\nModel Performance\nThe logistic regression model achieved:\n\nAccuracy: 0.82\nPrecision: 0.70 (moderately conservative in predicting deaths)\nRecall: 0.74 (captures the majority of high-risk cases)\nF1-Score: 0.72 (good balance between precision and recall)\n\nConfusion Matrix\nThe confusion matrix below shows the performance of the classification model in predicting survival outcomes:\n\n\n\nActual  Predicted\nSurvived (0)\nDeceased (1)\n\n\n\n\nSurvived (0)\n35\n6\n\n\nDeceased (1)\n5\n14\n\n\n\nThe confusion matrix highlights:\n\nTrue Positives: 14 patients correctly identified as deceased.\nTrue Negatives: 35 patients correctly identified as survivors.\nFalse Positives: 6 survivors misclassified as deceased.\nFalse Negatives: 5 deaths missed by the model.\n\n\n\n\nKey Insights\n\nFeature Importance:\n\nPlatelets and ejection fraction were the most influential features in predicting survival.\nOther significant features included serum creatinine and creatinine phosphokinase.\n\nChallenges:\n\nClass imbalance led to potential biases in the model.\nLimited data availability restricted the model’s ability to fully generalize.\n\nOpportunities for Improvement:\n\nCollecting a larger, more diverse dataset.\nExperimenting with ensemble models (e.g., Random Forest, Gradient Boosting).\n\n\n\n\n\nReal-World Applications\nThis model demonstrates the potential to support clinicians in:\n\nIdentifying high-risk patients for early intervention.\nAllocating medical resources more effectively.\nEnhancing personalized treatment plans based on patient profiles.\n\n\n\n\nConclusion\nOur logistic regression model serves as a foundational tool in predicting survival rates for heart failure patients. While its performance is promising, further optimization and larger datasets could significantly improve its clinical utility. With advancements in machine learning and data collection, such predictive models hold immense potential in transforming healthcare decision-making and saving lives."
   },
   {
     "objectID": "about.html",
@@ -21,10 +14,10 @@
     "text": "About this blog"
   },
   {
-    "objectID": "posts/post-with-code/index.html",
-    "href": "posts/post-with-code/index.html",
-    "title": "Post With Code",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Data-Driven Healthcare: Predicting Heart Failure",
     "section": "",
-    "text": "This is a post with executable code."
+    "text": "Predicting Survival in Heart Failure Patients Using Logistic Regression\n\n\n\n\n\n\nAnalysis\n\n\n\n\n\n\n\n\n\nJan 15, 2025\n\n\nKe Gao\n\n\n\n\n\n\nNo matching items"
   }
 ]
